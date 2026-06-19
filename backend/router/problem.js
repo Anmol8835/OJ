@@ -1,5 +1,5 @@
 const router=require("express").Router();
-const Problem=require("../models/Problem")
+const prisma = require("../database/prisma");
 
 router.post("/add", async (req, res) => {
     const { title, desc, statement, input, output, constraints, testcase, createdBy } = req.body;
@@ -9,21 +9,29 @@ router.post("/add", async (req, res) => {
         return res.status(400).json({ message: "Please provide all required fields" });
     }
 
-    // Prepare the data for saving
-    const problemData = {
-        title,
-        desc,
-        statement,
-        input,
-        output,
-        constraints,
-        createdBy,
-        testcase
-    };
-
     try {
-        const newProblem = new Problem(problemData);
-        const savedProblem = await newProblem.save();
+        const savedProblem = await prisma.problem.create({
+            data: {
+                title,
+                desc,
+                statement,
+                input,
+                output,
+                constraints,
+                createdBy,
+                testcases: {
+                    create: testcase.map(tc => ({
+                        input: tc.input,
+                        output: tc.output,
+                        sample: tc.sample || false,
+                        explanation: tc.explanation
+                    }))
+                }
+            },
+            include: {
+                testcases: true
+            }
+        });
         res.status(201).json(savedProblem);
     } catch (err) {
         console.log(err);
@@ -34,17 +42,33 @@ router.post("/add", async (req, res) => {
 
 router.put("/edit/:id", async (req, res) => {
     const { testcase, detail } = req.body;
-    const id = req.params.id
-  
+    const id = parseInt(req.params.id);
+
     if (!testcase || !detail || !id) {
       return res.status(400).json({ message: "Missing required fields" });
     }
-  
-    const data = { ...detail, testcase: [...testcase], createdBy: req.user._id };
-  
+
     try {
-      const saved = await Problem.findByIdAndUpdate(id, data);
-  
+      // Delete existing testcases and update problem with new data
+      const saved = await prisma.problem.update({
+        where: { id },
+        data: {
+          ...detail,
+          testcases: {
+            deleteMany: {},
+            create: testcase.map(tc => ({
+              input: tc.input,
+              output: tc.output,
+              sample: tc.sample || false,
+              explanation: tc.explanation
+            }))
+          }
+        },
+        include: {
+          testcases: true
+        }
+      });
+
       return res.status(201).json(saved);
     } catch (error) {
       console.log(error);
@@ -53,14 +77,16 @@ router.put("/edit/:id", async (req, res) => {
   });
 
 router.delete("/delete",async(req,res)=>{
-    const id=req.query.id;
+    const id = parseInt(req.query.id);
 
     if(!id){
         return res.status(400).json({message: "missing req feilds"});
     }
 
     try{
-        await Problem.findByIdAndDelete(id);
+        await prisma.problem.delete({
+            where: { id }
+        });
 
         return res.status(201).json({message:"successfully deleted"});
     }
@@ -72,7 +98,11 @@ router.delete("/delete",async(req,res)=>{
 
 router.get("/",async(req,res)=>{
     try{
-        const problems=await Problem.find();
+        const problems = await prisma.problem.findMany({
+            include: {
+                testcases: true
+            }
+        });
         return res.status(200).json(problems);
     }
     catch(err){
@@ -82,7 +112,12 @@ router.get("/",async(req,res)=>{
 
 router.get("/:id",async(req,res)=>{
     try{
-        const problem=await Problem.findById(req.params.id);
+        const problem = await prisma.problem.findUnique({
+            where: { id: parseInt(req.params.id) },
+            include: {
+                testcases: true
+            }
+        });
         return res.status(200).json(problem);
     }
     catch(err){

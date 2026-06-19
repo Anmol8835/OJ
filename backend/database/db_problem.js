@@ -1,16 +1,16 @@
-const mongoose =require("mongoose")
-const env=require("dotenv")
+const prisma = require("./prisma");
+const env = require("dotenv");
 
 env.config();
 
-const dbconnection=async()=>{
-    try{
-        await mongoose.connect(process.env.mongo_url_problem);
-        console.log("Database connected");
+const dbconnection = async () => {
+    try {
+        await prisma.$connect();
+        console.log("Database connected (PostgreSQL with Prisma)");
     }
-    catch(err){
+    catch (err) {
         console.error("Database connection error:", err);
     }
 }
 
-module.exports=dbconnection;
+module.exports = dbconnection;

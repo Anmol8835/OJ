@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import Editor from 'react-simple-code-editor';
+// import Editor from 'react-simple-code-editor';
+import Editor  from "@monaco-editor/react";
 import { highlight, languages } from 'prismjs/components/prism-core';
 import 'prismjs/components/prism-clike';
 import 'prismjs/components/prism-javascript';
@@ -32,7 +33,7 @@ function Compiler(props) {
     const payload = {
       language: 'cpp',
       code,
-      input
+      input:'NULL'
     };
 
     try {
@@ -41,6 +42,7 @@ function Compiler(props) {
       setOutput(data);
     }
     catch (err) {
+      setOutput(err.response.data.message.stderr);
       console.log(err);
     }
   }
@@ -77,20 +79,16 @@ function Compiler(props) {
       {/* <div className="right-side w-1/2 bg-gray-100 p-8 rounded-r-lg shadow-md"> */}
         {/* Code editor */}
         <div className="bg-gray-100 shadow-md w-full mb-4">
-          <Editor
+          <Editor 
+            height="300px"
+            // width="100%"
+            language="cpp"
             value={code}
-            onValueChange={code => setCode(code)}
-            highlight={code => highlight(code, languages.js)}
-            padding={10}
-            style={{
-              fontFamily: '"Fira code", "Fira Mono", monospace',
-              fontSize: 12,
-              outline: 'none',
-              border: 'none',
-              backgroundColor: '#f7fafc',
-              height: '100%',
-              overflowY: 'auto'
-            }}
+            onChange={code=>setCode(code)}
+            // options={{
+            //   fontSize: 14,
+            //   minimap: { enabled: false },
+            // }}
           />
         </div>
         <div>
@@ -114,6 +112,11 @@ function Compiler(props) {
           className="submit-button text-center inline-flex items-center text-white bg-gradient-to-br from-green-500 to-blue-400 hover:bg-gradient-to-bl focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2">
           Submit
         </button>
+      </div>
+
+
+      <div className='console'>
+
       </div>
 
       {/* Output */}

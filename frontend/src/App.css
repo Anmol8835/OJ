@@ -104,12 +104,12 @@ body {
   border-right: 1px solid #ddd; /* Divider between two sections */
 }
 
+
 .problem_compiler {
   display: flex;
   flex-direction: column;
   background-color: #fff; /* White background for compiler */
 }
-
 /* Style for the input area */
 .input-area {
   width: 45%;

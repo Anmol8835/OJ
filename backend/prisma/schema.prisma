@@ -1,0 +1,39 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Problem {
+  id          Int        @id @default(autoincrement())
+  title       String
+  desc        String?
+  input       String?
+  output      String?
+  constraints String?
+  timelimit   Float      @default(5.0)
+  statement   String
+  createdBy   String
+  testcases   Testcase[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@map("problems")
+}
+
+model Testcase {
+  id          Int      @id @default(autoincrement())
+  input       String?
+  output      String?
+  sample      Boolean  @default(false)
+  explanation String?
+  problemId   Int
+  problem     Problem  @relation(fields: [problemId], references: [id], onDelete: Cascade)
+
+  @@map("testcases")
+}
