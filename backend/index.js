@@ -13,7 +13,7 @@ app.use(express.urlencoded({extended:true}))
 Dbconnection();
 
 
-const port=9000;
+const port=8001;
 
 app.use("/api/problem",require('./router/problem'))
 
@@ -45,7 +45,7 @@ app.post("/run",async(req,res)=>{
 
 app.listen(port,()=>{
     try{
-    console.log("Server is litsening at port 9000")
+    console.log("Server is litsening at port 8000")
     }
     catch(err){
         console.log(err)

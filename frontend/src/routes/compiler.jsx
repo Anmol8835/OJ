@@ -37,7 +37,7 @@ function Compiler(props) {
     };
 
     try {
-      const { data } = await axios.post('http://localhost:9000/run', payload);
+      const { data } = await axios.post('http://localhost:8001/run', payload);
       console.log(data);
       setOutput(data);
     }
@@ -58,7 +58,7 @@ function Compiler(props) {
       };
 
       try {
-        const { data } = await axios.post('http://localhost:9000/run', payload);
+        const { data } = await axios.post('http://localhost:8001/run', payload);
         if (data.trim() !== testcase.output.trim()) {
           allCorrect = false;
           break;

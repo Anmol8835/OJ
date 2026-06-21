@@ -14,7 +14,7 @@ const Problemset = () => {
     useEffect(() => {
         const fetchProblems = async () => {
             try {
-                const response = await axios.get("http://localhost:9000/api/problem");
+                const response = await axios.get("http://localhost:8001/api/problem");
                 setProblems(response.data);
             } catch (err) {
                 setErr(err);
@@ -36,10 +36,10 @@ const Problemset = () => {
             <h1>Problem Set</h1>
             <ul>
                 {problems.map((problem) => (
-                    <li key={problem._id}>
+                    <li key={problem.id}>
                         <h2>{problem.title}</h2>
                         <p>{problem.desc}</p>
-                        <button className="style_button" onClick={() => handleClick(problem._id)}>Solve</button>
+                        <button className="style_button" onClick={() => handleClick(problem.id)}>Solve</button>
                     </li>
                 ))}
             </ul>

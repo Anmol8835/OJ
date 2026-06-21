@@ -17,7 +17,7 @@ const Solve = () => {
     useEffect(() => {
         const fetchProblem = async () => {
             try {
-                const response = await axios.get(`http://localhost:9000/api/problem/${id}`);
+                const response = await axios.get(`http://localhost:8001/api/problem/${id}`);
                 setProblem(response.data);
             } catch (err) {
                 setErr(err);

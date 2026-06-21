@@ -215,7 +215,7 @@ const AddProblem = () => {
     e.preventDefault();
     console.log(problem); // This will show you what is being sent
     try {
-        await axios.post("http://localhost:9000/api/problem/add", problem);
+        await axios.post("http://localhost:8001/api/problem/add", problem);
         alert("Problem added successfully!");
     } catch (err) {
         console.error(err);
