@@ -69,13 +69,13 @@ const Solve = () => {
                     <p>{problem.constraints}</p>
 
                     <h2>Test Cases:</h2>
-                    {problem.testcase.map((testcase, index) => (
+                    {/* {problem.testcase.map((testcase, index) => (
                         <div key={index} style={styles.testCase}>
                             <p>Input: {testcase.input}</p>
                             <p>Output: {testcase.output}</p>
                             {testcase.explanation && <p>Explanation: {testcase.explanation}</p>}
                         </div>
-                    ))}
+                    ))} */}
                 </div>
             </div>
 

@@ -10,18 +10,21 @@ datasource db {
 }
 
 model Problem {
-  id          Int        @id @default(autoincrement())
-  title       String
-  desc        String?
-  input       String?
-  output      String?
-  constraints String?
-  timelimit   Float      @default(5.0)
-  statement   String
-  createdBy   String
-  testcases   Testcase[]
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+  id                Int        @id @default(autoincrement())
+  title             String
+  desc              String?
+  input             String?
+  output            String?
+  constraints       String?
+  timelimit         Float      @default(5.0)
+  statement         String
+  createdBy         String
+  testcases         Testcase[]
+  inputSpec         Json?      // Stores input specification for test generation
+  correctSolution   String?    // Stores the correct solution code
+  solutionLanguage  String?    // Language of the correct solution (cpp, python, etc.)
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
 
   @@map("problems")
 }

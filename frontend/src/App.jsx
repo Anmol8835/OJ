@@ -8,10 +8,10 @@ import NavBar from './routes/navbar';
 import Problemset from './routes/problems';
 import Solve from './routes/solve'
 import Addproblem from './routes/addproblem';
+import AddProblemEnhanced from './routes/addproblem_enhanced';
 import Login from './routes/login';
 import Register from './routes/register';
 import PrivateRouteUser from './routes/privateRouteUser';
-
 import Logout from './routes/logout'; 
 import PrivateRoute from './routes/privateRouteAdmin';
  
@@ -28,6 +28,9 @@ const App = () => {
             </Route>
             <Route element={<PrivateRoute />}>
                <Route path="/add" element={<Addproblem/>} /> 
+            </Route>
+            <Route element={<PrivateRoute />}>
+               <Route path="/add_enhanced" element={<AddProblemEnhanced/>} /> 
             </Route>
             <Route path="/login" element={<Login/>}/>
             <Route path="/register" element={<Register/>}/>

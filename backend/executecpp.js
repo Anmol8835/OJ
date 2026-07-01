@@ -18,7 +18,7 @@ const executecpp=async(filepath,inputpath)=>{
     const outputfile=path.join(outpupath,outputname);
     
     return new Promise((resolve,reject)=>{
-        exec(`g++ ${filepath} -o ${outputfile} && cd ${outpupath} && .\\${outputname} < ${inputpath}`,
+        exec(`g++ "${filepath}" -o "${outputfile}" && cd "${outpupath}" && ./${outputname} < "${inputpath}"`,
             (error,stdout,stderr)=>{
             if(error){
                 reject({error,stderr});

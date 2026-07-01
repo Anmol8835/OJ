@@ -1,8 +1,12 @@
 const router=require("express").Router();
 const prisma = require("../database/prisma");
+const { generateTestCases, generatePreviewTestCase } = require("../services/testCaseGenerator");
 
 router.post("/add", async (req, res) => {
-    const { title, desc, statement, input, output, constraints, testcase, createdBy } = req.body;
+    const {
+        title, desc, statement, input, output, constraints, testcase, createdBy,
+        inputSpec, correctSolution, solutionLanguage
+    } = req.body;
 
     // Basic validation
     if (!title || !statement || !input || !output || !constraints || !testcase || !createdBy) {
@@ -10,24 +14,32 @@ router.post("/add", async (req, res) => {
     }
 
     try {
+        // Prepare data object - only include new fields if columns exist
+        const data = {
+            title,
+            desc,
+            statement,
+            input,
+            output,
+            constraints,
+            createdBy,
+            testcases: {
+                create: testcase.map(tc => ({
+                    input: tc.input,
+                    output: tc.output,
+                    sample: tc.sample || false,
+                    explanation: tc.explanation
+                }))
+            }
+        };
+
+        // Only add new fields if they are provided (for backward compatibility)
+        if (inputSpec !== undefined) data.inputSpec = inputSpec;
+        if (correctSolution !== undefined) data.correctSolution = correctSolution;
+        if (solutionLanguage !== undefined) data.solutionLanguage = solutionLanguage;
+
         const savedProblem = await prisma.problem.create({
-            data: {
-                title,
-                desc,
-                statement,
-                input,
-                output,
-                constraints,
-                createdBy,
-                testcases: {
-                    create: testcase.map(tc => ({
-                        input: tc.input,
-                        output: tc.output,
-                        sample: tc.sample || false,
-                        explanation: tc.explanation
-                    }))
-                }
-            },
+            data,
             include: {
                 testcases: true
             }
@@ -124,5 +136,70 @@ router.get("/:id",async(req,res)=>{
         return res.status(500).json(err);
     }
 })
+
+// Generate test cases for a problem
+router.post("/generate-tests", async (req, res) => {
+    const { inputSpec, correctSolution, language = 'cpp', numTests = 5, numEdgeCases = 2 } = req.body;
+
+    if (!inputSpec || !correctSolution) {
+        return res.status(400).json({
+            success: false,
+            message: "Input specification and correct solution are required"
+        });
+    }
+
+    try {
+        const testCases = await generateTestCases({
+            inputSpec,
+            correctSolution,
+            language,
+            numTests,
+            numEdgeCases
+        });
+
+        return res.status(200).json({
+            success: true,
+            testCases
+        });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({
+            success: false,
+            message: err.message
+        });
+    }
+});
+
+// Preview a single test case (for testing during problem creation)
+router.post("/preview-test", async (req, res) => {
+    const { inputSpec, correctSolution, language = 'cpp', isEdgeCase = false } = req.body;
+
+    if (!inputSpec) {
+        return res.status(400).json({
+            success: false,
+            message: "Input specification is required"
+        });
+    }
+
+    try {
+        const testCase = await generatePreviewTestCase({
+            inputSpec,
+            correctSolution,
+            language,
+            isEdgeCase
+        });
+
+        return res.status(200).json({
+            success: true,
+            testCase
+        });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({
+            success: false,
+            message: err.message
+        });
+    }
+});
 
 module.exports = router;
