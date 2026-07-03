@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import InputSpecBuilder from "../components/InputSpecBuilder";
+import { API_URL } from "../config";
 
 const AddProblemEnhanced = () => {
   const [problem, setProblem] = useState({
@@ -60,7 +61,7 @@ const AddProblemEnhanced = () => {
 
     setLoading(true);
     try {
-      const response = await axios.post("http://localhost:8001/api/problem/preview-test", {
+      const response = await axios.post(`${API_URL}/api/problem/preview-test`, {
         inputSpec,
         correctSolution: correctSolution || null,
         language: solutionLanguage,
@@ -91,7 +92,7 @@ const AddProblemEnhanced = () => {
 
     setLoading(true);
     try {
-      const response = await axios.post("http://localhost:8001/api/problem/generate-tests", {
+      const response = await axios.post(`${API_URL}/api/problem/generate-tests`, {
         inputSpec,
         correctSolution,
         language: solutionLanguage,
@@ -132,7 +133,7 @@ const AddProblemEnhanced = () => {
         solutionLanguage: autoGenerate ? solutionLanguage : null
       };
 
-      await axios.post("http://localhost:8001/api/problem/add", problemData);
+      await axios.post(`${API_URL}/api/problem/add`, problemData);
       alert("Problem added successfully!");
 
       // Reset form

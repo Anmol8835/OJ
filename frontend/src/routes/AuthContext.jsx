@@ -1,6 +1,7 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { AUTH_URL } from '../config';
 
 export const AuthContext = createContext();
 
@@ -11,7 +12,7 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
         const checkAuth = async () => {
             try {
-                const response = await axios.get('http://localhost:8000/checkAuth',{ withCredentials: true } );
+                const response = await axios.get(`${AUTH_URL}/checkAuth`,{ withCredentials: true } );
                 setUser(response.data.user);
             } catch (error) {
                 setUser(null);
@@ -22,7 +23,7 @@ export const AuthProvider = ({ children }) => {
 
     const login = async (email, password) => {
         try {
-            const response = await axios.post('http://localhost:8000/login', { email, password },{ withCredentials: true } );
+            const response = await axios.post(`${AUTH_URL}/login`, { email, password },{ withCredentials: true } );
             setUser(response.data.user);
             // navigate('/login');
             console.log(response.data);
@@ -33,7 +34,7 @@ export const AuthProvider = ({ children }) => {
 
     const register = async (name, username, email, password) => {
         try {
-            const response = await axios.post('http://localhost:8000/register', { name, username, email, password });
+            const response = await axios.post(`${AUTH_URL}/register`, { name, username, email, password });
             setUser(response.data.user);
             navigate('/');
         } catch (error) {
@@ -43,7 +44,7 @@ export const AuthProvider = ({ children }) => {
 
     const logout = async () => {
         try {
-            await axios.post('http://localhost:8000/logout', {}, { withCredentials: true });
+            await axios.post(`${AUTH_URL}/logout`, {}, { withCredentials: true });
             setUser(null);
             // navigate('/');
         } catch (error) {

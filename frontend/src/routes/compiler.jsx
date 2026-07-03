@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { API_URL } from '../config';
 // import Editor from 'react-simple-code-editor';
 import Editor  from "@monaco-editor/react";
 import { highlight, languages } from 'prismjs/components/prism-core';
@@ -37,7 +38,7 @@ function Compiler(props) {
     };
 
     try {
-      const { data } = await axios.post('http://localhost:8001/run', payload);
+      const { data } = await axios.post(`${API_URL}/run`, payload);
       console.log(data);
       setOutput(data);
     }
@@ -58,7 +59,7 @@ function Compiler(props) {
       };
 
       try {
-        const { data } = await axios.post('http://localhost:8001/run', payload);
+        const { data } = await axios.post(`${API_URL}/run`, payload);
         if (data.trim() !== testcase.output.trim()) {
           allCorrect = false;
           break;

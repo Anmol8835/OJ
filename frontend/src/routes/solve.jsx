@@ -4,6 +4,7 @@ import axios from "axios";
 import Compiler from "./compiler";
 import { AlertCircle, Loader, Trash } from "lucide-react"; // Import Lucide icons
 import { AuthContext } from "./AuthContext";
+import { API_URL } from "../config";
 
 const Solve = () => {
     let { id } = useParams();
@@ -17,7 +18,7 @@ const Solve = () => {
     useEffect(() => {
         const fetchProblem = async () => {
             try {
-                const response = await axios.get(`http://localhost:8001/api/problem/${id}`);
+                const response = await axios.get(`${API_URL}/api/problem/${id}`);
                 setProblem(response.data);
             } catch (err) {
                 setErr(err);
@@ -29,7 +30,7 @@ const Solve = () => {
 
     const handleDelete = async () => {
         try {
-            await axios.delete(`http://localhost:9000/api/problem/delete`, { params: { id } });
+            await axios.delete(`${API_URL}/api/problem/delete`, { params: { id } });
             alert("Problem deleted successfully!");
             navigate('/'); // Redirect the user after successful deletion
         } catch (err) {

@@ -1,0 +1,8 @@
+node_modules
+npm-debug.log
+.env
+code
+exe
+Input
+Dockerfile
+.dockerignore

@@ -174,6 +174,7 @@
 // export default Addproblem;
 import React, { useState } from "react";
 import axios from "axios";
+import { API_URL } from "../config";
 
 const AddProblem = () => {
   const [problem, setProblem] = useState({
@@ -215,7 +216,7 @@ const AddProblem = () => {
     e.preventDefault();
     console.log(problem); // This will show you what is being sent
     try {
-        await axios.post("http://localhost:8001/api/problem/add", problem);
+        await axios.post(`${API_URL}/api/problem/add`, problem);
         alert("Problem added successfully!");
     } catch (err) {
         console.error(err);

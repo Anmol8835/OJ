@@ -1,5 +1,6 @@
 import React from "react"
 import axios from "axios"
+import { API_URL } from "../config";
 import { useState, useEffect } from "react"
 import '../App.css'; 
 import { useNavigate } from "react-router-dom";
@@ -14,7 +15,7 @@ const Problemset = () => {
     useEffect(() => {
         const fetchProblems = async () => {
             try {
-                const response = await axios.get("http://localhost:8001/api/problem");
+                const response = await axios.get(`${API_URL}/api/problem`);
                 setProblems(response.data);
             } catch (err) {
                 setErr(err);
