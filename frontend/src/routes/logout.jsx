@@ -1,36 +1,30 @@
-import React, { useContext } from 'react';
-import { AuthContext } from './AuthContext';
+import React, { useContext, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from "./AuthContext";
 
 const Logout = () => {
   const { logout } = useContext(AuthContext);
+  const navigate = useNavigate();
 
-  const handleLogout = () => {
-    logout();
-  };
+  useEffect(() => {
+    const run = async () => {
+      await logout();
+      navigate("/");
+    };
+    run();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
-    <button onClick={handleLogout} style={styles.button}>
-      Logout
-    </button>
+    <div className="flex min-h-[calc(100vh-4rem)] items-center">
+      <div className="shell">
+        <span className="label">Session</span>
+        <p className="mt-4 font-display text-2xl font-semibold uppercase tracking-tight text-black">
+          Signing out…
+        </p>
+      </div>
+    </div>
   );
-};
-
-// Inline styles
-const styles = {
-  button: {
-    backgroundColor: '#FF4D4D', // Red background
-    color: 'white',             // White text
-    border: 'none',             // Remove border
-    borderRadius: '5px',        // Rounded corners
-    padding: '10px 20px',       // Padding
-    fontSize: '16px',           // Text size
-    cursor: 'pointer',          // Pointer on hover
-    transition: 'background-color 0.3s', // Smooth transition on hover
-    boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)', // Slight shadow for depth
-  },
-  buttonHover: {
-    backgroundColor: '#FF3333', // Darker red on hover
-  }
 };
 
 export default Logout;

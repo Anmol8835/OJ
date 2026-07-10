@@ -1,12 +1,13 @@
-import React, { useState, useContext } from 'react';
-import AuthContext from './AuthContext';
-import { EyeIcon, EyeOffIcon } from 'lucide-react';
+import React, { useState, useContext } from "react";
+import { Link } from "react-router-dom";
+import AuthContext from "./AuthContext";
+import { Eye, EyeOff } from "lucide-react";
 
 const Register = () => {
-  const [name, setName] = useState('');
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const { register } = useContext(AuthContext);
 
@@ -16,32 +17,35 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Create your account
-          </h2>
-        </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="rounded-md shadow-sm -space-y-px">
+    <div className="flex min-h-[calc(100vh-4rem)] items-center py-12">
+      <div className="shell w-full">
+        <div className="mx-auto grid max-w-md gap-10">
+          <div>
+            <span className="label">Account</span>
+            <h1 className="mt-4 font-display text-4xl font-bold uppercase tracking-tight text-black md:text-5xl">
+              Create account
+            </h1>
+          </div>
+
+          <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
-              <label htmlFor="name" className="sr-only">
-                Name
+              <label htmlFor="name" className="field-label">
+                Full name
               </label>
               <input
                 id="name"
                 name="name"
                 type="text"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Full Name"
+                className="field"
+                placeholder="Ada Lovelace"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
               />
             </div>
+
             <div>
-              <label htmlFor="username" className="sr-only">
+              <label htmlFor="username" className="field-label">
                 Username
               </label>
               <input
@@ -49,15 +53,16 @@ const Register = () => {
                 name="username"
                 type="text"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Username"
+                className="field"
+                placeholder="ada"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
               />
             </div>
+
             <div>
-              <label htmlFor="email-address" className="sr-only">
-                Email address
+              <label htmlFor="email-address" className="field-label">
+                Email
               </label>
               <input
                 id="email-address"
@@ -65,50 +70,52 @@ const Register = () => {
                 type="email"
                 autoComplete="email"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Email address"
+                className="field"
+                placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
-            <div className="relative">
-              <label htmlFor="password" className="sr-only">
+
+            <div>
+              <label htmlFor="password" className="field-label">
                 Password
               </label>
-              <input
-                id="password"
-                name="password"
-                type={showPassword ? "text" : "password"}
-                autoComplete="new-password"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              <button
-                type="button"
-                className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? (
-                  <EyeOffIcon className="h-5 w-5 text-gray-500" />
-                ) : (
-                  <EyeIcon className="h-5 w-5 text-gray-500" />
-                )}
-              </button>
+              <div className="relative">
+                <input
+                  id="password"
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  autoComplete="new-password"
+                  required
+                  className="field pr-12"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                <button
+                  type="button"
+                  className="absolute inset-y-0 right-0 flex items-center pr-4 text-neutral-400 transition-colors hover:text-black"
+                  onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
             </div>
-          </div>
 
-          <div>
-            <button
-              type="submit"
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
+            <button type="submit" className="btn-primary w-full">
               Register
             </button>
-          </div>
-        </form>
+          </form>
+
+          <p className="rule pt-6 text-sm text-neutral-500">
+            Already have an account?{" "}
+            <Link to="/login" className="font-medium text-black underline decoration-signal decoration-2 underline-offset-4">
+              Sign in
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );

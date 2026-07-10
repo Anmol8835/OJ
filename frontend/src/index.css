@@ -1,3 +1,61 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-white text-black font-sans;
+  }
+
+  /* Swiss touch: inverted selection */
+  ::selection {
+    @apply bg-black text-white;
+  }
+}
+
+@layer components {
+  /* Consistent page gutter + max width */
+  .shell {
+    @apply max-w-6xl mx-auto px-6 md:px-8;
+  }
+
+  /* Small uppercase mono label, e.g. section numbers / eyebrows */
+  .label {
+    @apply font-mono text-[11px] uppercase tracking-label text-neutral-400;
+  }
+
+  /* Hairline rule */
+  .rule {
+    @apply border-t border-neutral-200;
+  }
+
+  /* Buttons — sharp corners, monochrome, red on interaction */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 text-sm font-medium
+           transition-colors duration-150 select-none whitespace-nowrap;
+  }
+  .btn-primary {
+    @apply btn bg-black text-white px-6 py-3 hover:bg-signal
+           focus:outline-none focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2;
+  }
+  .btn-secondary {
+    @apply btn border border-black text-black px-6 py-3
+           hover:bg-black hover:text-white
+           focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2;
+  }
+
+  /* Form controls */
+  .field {
+    @apply w-full bg-white border border-neutral-300 px-4 py-3 text-sm text-black
+           placeholder-neutral-400 transition-colors
+           focus:outline-none focus:border-black;
+  }
+  .field-label {
+    @apply block font-mono text-[11px] uppercase tracking-label text-neutral-500 mb-2;
+  }
+}

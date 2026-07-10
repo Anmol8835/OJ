@@ -1,66 +1,56 @@
-import { useState } from 'react'
-import { API_URL } from '../config';
-// import Editor from 'react-simple-code-editor';
-import Editor  from "@monaco-editor/react";
-import { highlight, languages } from 'prismjs/components/prism-core';
-import 'prismjs/components/prism-clike';
-import 'prismjs/components/prism-javascript';
-import 'prismjs/themes/prism.css';
-import axios from 'axios';
-import '../App.css'
+import { useState } from "react";
+import { API_URL } from "../config";
+import Editor from "@monaco-editor/react";
+import axios from "axios";
+import { Play, Send, Check, X, Loader2 } from "lucide-react";
+
+const DEFAULT_CODE = `#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+    cout << "Hello World!";
+    return 0;
+}`;
 
 function Compiler(props) {
-  const [code, setCode] = useState(`
-  // Include the input/output stream library
-  #include <iostream> 
-  #include <bits/stdc++.h>
-  using namespace std;
+  const [code, setCode] = useState(DEFAULT_CODE);
+  const [input, setInput] = useState("");
+  const [output, setOutput] = useState("");
+  const [verdict, setVerdict] = useState("");
+  const [running, setRunning] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
-  // Define the main function
-  int main() { 
-      // Output "Hello World!" to the console
-      cout << "Hello World!"; 
-      
-      // Return 0 to indicate successful execution
-      return 0; 
-  }`);
+  const testcases = props.problem?.testcase || props.testcases || [];
 
-  const [input,setInput]=useState();
-
-  const [output, setOutput] = useState('');
-
-  const [verdict,setVerdict]=useState('');
-  const handleClick = async () => {
-    const payload = {
-      language: 'cpp',
-      code,
-      input:'NULL'
-    };
-
+  const handleRun = async () => {
+    setRunning(true);
+    setVerdict("");
+    const payload = { language: "cpp", code, input: input || "" };
     try {
       const { data } = await axios.post(`${API_URL}/run`, payload);
-      console.log(data);
-      setOutput(data);
+      setOutput(String(data));
+    } catch (err) {
+      setOutput(err?.response?.data?.message?.stderr || "An error occurred while running your code.");
+    } finally {
+      setRunning(false);
     }
-    catch (err) {
-      setOutput(err.response.data.message.stderr);
-      console.log(err);
-    }
-  }
+  };
+
   const handleSubmit = async () => {
+    if (testcases.length === 0) {
+      setVerdict("NoTests");
+      return;
+    }
+    setSubmitting(true);
+    setVerdict("");
     let allCorrect = true;
 
-    for (let i = 0; i < props.testcases.length; i++) {
-      const testcase = props.testcases[i];
-      const payload = {
-        language: 'cpp',
-        code,
-        input: testcase.input,
-      };
-
+    for (let i = 0; i < testcases.length; i++) {
+      const testcase = testcases[i];
+      const payload = { language: "cpp", code, input: testcase.input };
       try {
         const { data } = await axios.post(`${API_URL}/run`, payload);
-        if (data.trim() !== testcase.output.trim()) {
+        if (String(data).trim() !== String(testcase.output).trim()) {
           allCorrect = false;
           break;
         }
@@ -71,76 +61,95 @@ function Compiler(props) {
       }
     }
 
-    setVerdict(allCorrect ? 'Correct' : 'Incorrect');
+    setVerdict(allCorrect ? "Correct" : "Incorrect");
+    setSubmitting(false);
   };
 
   return (
-    <div >
-      {/* Right side (code editor and output) */}
-      {/* <div className="right-side w-1/2 bg-gray-100 p-8 rounded-r-lg shadow-md"> */}
-        {/* Code editor */}
-        <div className="bg-gray-100 shadow-md w-full mb-4">
-          <Editor 
-            height="300px"
-            // width="100%"
-            language="cpp"
-            value={code}
-            onChange={code=>setCode(code)}
-            // options={{
-            //   fontSize: 14,
-            //   minimap: { enabled: false },
-            // }}
-          />
+    <div>
+      {/* Editor frame */}
+      <div className="border border-neutral-300 bg-white">
+        <div className="flex items-center justify-between border-b border-neutral-200 px-4 py-2.5">
+          <span className="font-mono text-xs text-neutral-500">main.cpp</span>
+          <span className="font-mono text-[10px] uppercase tracking-label text-neutral-400">
+            C++
+          </span>
         </div>
-        <div>
-          <textarea 
-            className="input-area"
-            placeholder="Enter your input here..."
-            onChange={(e) => setInput(e.target.value)}
-          ></textarea>
-        </div>
-
-      <div className="buttons">
-        <button 
-          onClick={handleClick} 
-          type="button" 
-          className="run-button text-center inline-flex items-center text-white bg-gradient-to-br from-pink-500 to-orange-400 hover:bg-gradient-to-bl focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2">
-          Run
-        </button>
-        <button 
-          onClick={handleSubmit} 
-          type="button" 
-          className="submit-button text-center inline-flex items-center text-white bg-gradient-to-br from-green-500 to-blue-400 hover:bg-gradient-to-bl focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2">
-          Submit
-        </button>
+        <Editor
+          height="380px"
+          language="cpp"
+          theme="vs"
+          value={code}
+          onChange={(value) => setCode(value ?? "")}
+          options={{
+            fontSize: 14,
+            fontFamily: "'JetBrains Mono', monospace",
+            minimap: { enabled: false },
+            scrollBeyondLastLine: false,
+            padding: { top: 12 },
+            smoothScrolling: true,
+            renderLineHighlight: "none",
+          }}
+        />
       </div>
 
-
-      <div className='console'>
-
+      {/* Custom input */}
+      <div className="mt-4">
+        <label className="field-label">Custom input</label>
+        <textarea
+          className="field h-24 resize-y font-mono"
+          placeholder="stdin for the Run button…"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+        />
       </div>
 
-      {/* Output */}
-      {output !== '' && (
-        <div className="outputbox mt-4 bg-gray-100 rounded-md shadow-md p-4">
-          <p style={{
-            fontFamily: '"Fira code", "Fira Mono", monospace',
-            fontSize: 12,
-          }}>
-            {String(output)}
-          </p>
-        </div>
-      )}
+      {/* Actions */}
+      <div className="mt-4 flex flex-wrap gap-3">
+        <button onClick={handleRun} disabled={running} className="btn-secondary disabled:opacity-50">
+          {running ? <Loader2 className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4" />}
+          {running ? "Running…" : "Run"}
+        </button>
+        <button onClick={handleSubmit} disabled={submitting} className="btn-primary disabled:opacity-50">
+          {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+          {submitting ? "Judging…" : "Submit"}
+        </button>
+      </div>
 
       {/* Verdict */}
-      {verdict !== '' && (
-        <div className={`verdict mt-4 p-4 ${verdict === 'Correct' ? 'bg-green-100' : 'bg-red-100'} rounded-md shadow-md`}>
-          <p>{verdict}</p>
+      {verdict === "Correct" && (
+        <div className="mt-5 flex items-center gap-3 border border-black bg-black px-4 py-3 text-white animate-fade-up">
+          <Check className="h-4 w-4" />
+          <span className="font-mono text-xs uppercase tracking-label">Accepted</span>
         </div>
       )}
-      {/* </div> */}
+      {verdict === "Incorrect" && (
+        <div className="mt-5 flex items-center gap-3 border border-signal bg-signal px-4 py-3 text-white animate-fade-up">
+          <X className="h-4 w-4" />
+          <span className="font-mono text-xs uppercase tracking-label">Wrong Answer</span>
+        </div>
+      )}
+      {verdict === "NoTests" && (
+        <div className="mt-5 border border-neutral-300 px-4 py-3 font-mono text-xs uppercase tracking-label text-neutral-500 animate-fade-up">
+          No test cases available for this problem.
+        </div>
+      )}
+
+      {/* Output */}
+      {output !== "" && (
+        <div className="mt-5 border border-neutral-300 bg-white animate-fade-up">
+          <div className="border-b border-neutral-200 px-4 py-2.5">
+            <span className="font-mono text-[10px] uppercase tracking-label text-neutral-400">
+              Output
+            </span>
+          </div>
+          <pre className="overflow-x-auto px-4 py-4 font-mono text-sm leading-relaxed text-neutral-800">
+            {String(output)}
+          </pre>
+        </div>
+      )}
     </div>
-  )
+  );
 }
 
-export default Compiler
+export default Compiler;

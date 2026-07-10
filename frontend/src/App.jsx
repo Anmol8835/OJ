@@ -18,8 +18,8 @@ import PrivateRoute from './routes/privateRouteAdmin';
 const App = () => {
    return (
       <BrowserRouter>
-          <NavBar/>
           <AuthProvider>
+         <NavBar/>
          <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/problemset" element={<Problemset />} />
