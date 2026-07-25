@@ -1,3 +1,4 @@
+// const express=require("express");
 const router=require("express").Router();
 const prisma = require("../database/prisma");
 const { generateTestCases, generatePreviewTestCase } = require("../services/testCaseGenerator");
@@ -130,6 +131,7 @@ router.get("/:id",async(req,res)=>{
                 testcases: true
             }
         });
+        console.log(problem)
         return res.status(200).json(problem);
     }
     catch(err){

@@ -26,9 +26,9 @@ const App = () => {
             <Route element={<PrivateRouteUser />}>
                <Route path="/problemset/:id" element={<Solve/>} /> 
             </Route>
-            <Route element={<PrivateRoute />}>
+            {/* <Route element={<PrivateRoute />}>
                <Route path="/add" element={<Addproblem/>} /> 
-            </Route>
+            </Route> */}
             <Route element={<PrivateRoute />}>
                <Route path="/add_enhanced" element={<AddProblemEnhanced/>} /> 
             </Route>

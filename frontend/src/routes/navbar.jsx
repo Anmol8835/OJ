@@ -17,7 +17,7 @@ const NavBar = () => {
   const links = [
     { to: "/", label: "Home", end: true },
     { to: "/problemset", label: "Problems" },
-    ...(user?.role === "admin" ? [{ to: "/add", label: "Add" }] : []),
+    ...(user?.role === "admin" ? [{ to: "/add_enhanced", label: "Add" }] : []),
   ];
 
   const close = () => setOpen(false);

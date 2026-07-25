@@ -20,7 +20,7 @@ function Compiler(props) {
   const [running, setRunning] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
-  const testcases = props.problem?.testcase || props.testcases || [];
+  const testcases = props.problem?.testcases || props.testcases || [];
 
   const handleRun = async () => {
     setRunning(true);

@@ -4,18 +4,19 @@ const executecpp = require("./executecpp");
 const cors  = require('cors');
 const { generateInput } = require("./generateInput");
 const Dbconnection=require("./database/db_problem");
+const router = require("./router/problem");
 const app=express();
 
 app.use(cors());
-app.use(express.json());
+app.use(express.json({limit:'200mb'}));
 app.use(express.urlencoded({extended:true}))
 
 Dbconnection();
 
 
-const port=8001;
+const port=process.env.PORT || 8001;
 
-app.use("/api/problem",require('./router/problem'))
+app.use("/api/problem", router);
 
 app.get("/",(req,res)=>{
     res.send("Compiler")
